@@ -1,8 +1,5 @@
 ---
-layout: page
-header: Work Portfolio
-title: portfolio
-group: navigation
+title: Portfolio
 ---
 
 This portfolio represents my best work and supplements my [resume](http://ifup.org/resume.txt)
