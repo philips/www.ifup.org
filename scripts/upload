@@ -1,5 +1,6 @@
 #!/bin/sh
 
 hugo -s .  -d upload
+cp upload/index.xml upload/feed
 gsutil cp -r -z html,css,js -a public-read public/* gs://www.ifup.org
 rm -R upload
