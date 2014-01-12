@@ -1,0 +1,9 @@
+{{ template "chrome/header.html" . }}
+{{ $baseurl := .Site.BaseUrl }}
+
+  <h1 id="title">{{ .Title }}</h1>
+  <article>
+     {{ .Content }}
+  </article>
+
+{{ template "chrome/footer.html" . }}

@@ -1,5 +1,5 @@
 {
-	"disqus_url": "http://www.ifup.org/2012/07/03/luvit-nodes-ziggy-stardust/index.html",
+	"disqus_url": "http://www.ifup.org/2012/07/03/luvit-nodes-ziggy-stardust/",
 	"disqus_title": "luvit: node's ziggy stardust",
 
 	"Title": "luvit: node's ziggy stardust",
@@ -33,7 +33,7 @@ embedding it in our monitoring agent.
 [slides]: http://ifup.org/slides/luvit-osb/
 [virgo-slides]: http://ifup.org/slides/virgo-oscon-2012/
 
-<img src="{{site.url}}/images/ziggy.gif" class="alignright" />
+<img src="/images/ziggy.gif" class="alignright" />
 
 ### Untechnical Overview
 
