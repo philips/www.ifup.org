@@ -29,7 +29,8 @@ a {
   background: #A1AB55;
 }
 
-.navbar-brand {
+.navbar-inverse .navbar-brand,
+a.navbar-brand {
   color: white;
 }
 
