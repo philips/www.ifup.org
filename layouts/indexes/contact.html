@@ -1,0 +1,13 @@
+{{ template "chrome/header.html" . }}
+
+<section id="main">
+  <div>
+    <h1 id="title">Contact</h1>
+    {{ range .Data.Pages }}
+      <h3>{{ .Title }}</h3>
+      {{ .Content }}
+    {{ end }}
+</div>
+</section>
+
+{{ template "chrome/footer.html" . }}
