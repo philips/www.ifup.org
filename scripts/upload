@@ -1,0 +1,5 @@
+#!/bin/sh
+
+hugo -s .  -d upload
+gsutil cp -r -z html,css,js -a public-read public/* gs://www.ifup.org
+rm -R upload
