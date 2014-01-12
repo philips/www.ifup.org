@@ -9,4 +9,6 @@
   </div>
   <p><span class="glyphicon glyphicon-time"></span> {{ .Date.Format "Mon Jan 2, 2006" }}</p>
 
+ {{ template "chrome/disqus.html" . }}
+
 {{ template "chrome/footer.html" . }}

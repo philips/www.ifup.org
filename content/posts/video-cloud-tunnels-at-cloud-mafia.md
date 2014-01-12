@@ -1,5 +1,9 @@
 {
+	"disqus_url": "http://www.ifup.org/2012/10/11/video:-cloud-tunnels-@-cloud-mafia/index.html",
+	"disqus_title": "Video: Cloud Tunnels at Cloud Mafia",
+
 	"Title": "Video: Cloud Tunnels at Cloud Mafia",
+	"Pubdate": "2012-10-11",
 	"Keywords": [
 		"networking",
 		"ethernet",
@@ -7,13 +11,12 @@
 		"vxlan",
 		"nvgre",
 	],
-	"Pubdate": "2012-10-11",
 	"Topics": [
 		"Development"
 	],
+
 	"Slug": "video-cloud-tunnels-at-cloud-mafia",
 	"Section": "post",
-	"Thumbnail": "/images/1916_try-aggro-1.png-200x200.png"
 }
 Building software defined networks for cloud computing has been a hot
 topic around the industry in the last year or so. There are blossoming
