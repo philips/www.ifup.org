@@ -1,0 +1,876 @@
+<!--
+Google IO 2012 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google IO 2012</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+<!--
+
+Doing on host monitoring is hard. In a given organization there are multiple OS
+platforms, multiple machine types with different CPU/memory availability and
+you need to monitor them all regardless.
+
+Ideally you want these machines to be running similar software which means you
+turn to a monitoring daemon written in a high level language like
+Ruby/Python/etc. But you don’t want your small cloud machines using a large
+percentage of memory or CPU doing monitoring either. It is a difficult
+trade-off of simplicity vs portability.
+
+Virgo was designed with this in mind.
+
+At its core virgo is written in C. But that is just for the basic platform.
+Everything that can be is written in Lua on top of Luvit. This means it is
+light on CPU and memory usage.
+
+To target multiple platforms virgo is compiled into one standalone binary that
+requires the most minimal OS platform beneath it. Oh, and it builds against OS
+X, Linux and Windows.
+
+It is a great bit of technology, built on some great emerging projects and it
+is open source. Learn about the cool tech, why it is being built, how it is
+being used and how you can start hacking on it too. 
+
+-->
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>Worked on Linux Kernels and robots. Lots of C in my past</li>
+        <li>Contracted with Cloudkick working on the Cloudkick agent</li>
+        <li>We will discuss how that shaped some of the design decisions of this agent.</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Who am I?</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li class="to-build">Linux Kernel</li>
+        <li class="to-build">Rackspace:
+          <br>
+          <ul>
+            <li>I work on <a href="http://www.rackspace.com/cloud/cloud_hosting_products/monitoring/">Cloud Monitoring</a></li>
+            <li>API Driven, Monitoring as a Service.</li>
+            <li>Distributed across all Rackspace data centers.</li>
+            <li>Async events trigger support issues.</li>
+            <li>When things break, we can be called in.</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+        <li>Define monitoring</li>
+        <li>External monitoring</li>
+        <li>Internal monitoring</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>What is monitoring?</h2>
+    </hgroup>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Monitoring is all about gaining insight into a system.</li>
+          <li>Concept of blackbox testing and white box testing in all systems</li>
+          <li>Products that exist today including: Wormly, Circonus, ServerDensity, Pingdom, Copperegg, Cloudkick</li>
+        </ul>
+        <p>Cloudkick is now Rackspace</p>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>What is monitoring?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <div class="build">
+        <div class="to-build">
+          <p>Awareness of the system</p>
+          <ul>
+            <li>External monitoring</li>
+            <li>Internal monitoring</li>
+          </ul>
+        </div>
+
+        <div class="to-build">
+          <p>The goal:</p>
+          <ul>
+            <li>Move past top</li>
+            <li>Move past ping</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>Black box testing</li>
+        <li>We have all done adhoc monitoring with ping, nmap or curl</li>
+        <li>Also pollers like nagios, gangalia, cacti</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>What is external monitoring?</h2>
+    </hgroup>
+
+    <article class="bigger">
+
+      <p><img src="./blackbox.png" alt="" /></p>
+
+      <ul class="build">
+        <li>ad-hoc monitoring
+
+        <ul>
+          <li>ping, nmap, curl</li>
+        </ul>
+        </li>
+        <li>pollers
+
+        <ul>
+          <li>nagios, ganglia, cacti, zenoss, noitd</li>
+        </ul>
+        </li>
+      </ul>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>White box testing</li>
+        <li>Essentially run scripts, gather data, push up to a central server</li>
+        <li>NRPE and NSClient are arguably best known</li>
+        <li>Proprietary ones mostly written in ruby, python, etc to skirt around platform issues</li>
+        <li>Cloudkick agent was C + Lua</li>
+        <li>Others are just a php script you run on cron</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>What is internal monitoring?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <p><img src="./whitebox.png" alt="" /></p>
+
+      <ul class="build">
+        <li>run scripts</li>
+        <li>gather statistics</li>
+        <li><p>push to monitoring server</p></li>
+        <li><p>examples of internal monitors</p>
+        <ul>
+          <li>NRPE, NSClient++, lots of proprietary ones</li>
+        </ul></li>
+      </ul>
+
+    </article>
+
+  </slide>
+
+  <slide class="segue red nobackground">
+    <article>
+      <hgroup>
+        <h2>Alerting and Historical Data</h2>
+      </hgroup>
+
+      <aside class="note"><section>
+        <ul>
+          <li>So you are monitoring, great! Now what?</li>
+          <li>There are essentially two things:</li>
+          <li>Urgent problems: Alert</li>
+          <li>Figuring out slow moving problems: Historical data</li>
+        </ul>
+        <p><b>punchline: very bipolar problems solved with monitoring either panic mode or
+        pretty graphs</b></p>
+      </section></aside>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Using monitored data: historical</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Trending data
+        <ul>
+          <li>Immediate, Hourly, Daily</li>
+          <li>etc</li>
+        </ul>
+        </li>
+        <li>Analyze for long running problems</li>
+        <li>Generate pretty graphs</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Using monitored data: alerting</h2>
+    </hgroup>
+
+    <article class="bigger">
+
+      <ul class="build">
+        <li>Pipeline looking at data</li>
+        <li>Language to define alert states</li>
+        <li>Notifications sent on alert
+
+        <ul>
+          <li>SMS</li>
+          <li>Webhooks</li>
+          <li>Email</li>
+        </ul>
+        </li>
+      </ul>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>Externally your machine serves up services over tcp and udp. </li>
+        <li>Internally your machine has a ton of metrics and information that it can expose</li>
+        <li>May allow the user to write their own plugins to ship metrics back</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>What does a monitoring agent do?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Enables white box monitoring</li>
+        <li>Report CPU/Memory/Disks/Database</li>
+        <li>User provided plugins or scripts</li>
+        <li>Daemonized or ran on cron</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+        <li>Virgo is an open source project</li>
+        <li>Infrastructure for the Rackspace Cloud Monitoring agent</li>
+      </ul>
+    </section></aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>Virgo</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>Cloud machines come in small sizes, need low memory</li>
+        <li>Updating a binary is hard</li>
+        <li>Statically link to reduce support load and problems</li>
+        <li>Support all of the platforms</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Design constraints</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Low memory usage (&lt; 5 Mb)</li>
+        <li>Simple secure &ldquo;proxyable&rdquo; protocol</li>
+        <li>High level scripting language</li>
+        <li>Statically linked requirements</li>
+        <li>Windows, Linux, and OSX</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>C++ has a ABI that changes a lot</li>
+        <li>We use luajit **210K for a jit and VM**</li>
+        <li>statically link everything except libc</li>
+        <li>sigar, openssl, minizip</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Design decisions</h2>
+    </hgroup>
+
+    <article class="bigger">
+
+      <ul class="build">
+        <li>Avoid C++ &amp; use Lua</li>
+        <li>Use Lua</li>
+        <li>Only depend on libc</li>
+        <li>SSL + JSON newline + JSONRPC</li>
+        <li>libuv</li>
+      </ul>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Memory Usage</h2>
+    </hgroup>
+
+    <aside class="note"><section>
+      <ul>
+        <li>15 - 20 Mb for a ruby agent</li>
+        <li>8 - 12 Mb for a python agent</li>
+        <li>20+ for a C++ agent</li>
+      </ul>
+    </section></aside>
+
+    <article class="flexbox vcenter">
+      <img src="./memory.png" alt="" />
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Protocol Overview</h2>
+    </hgroup>
+
+    <article class="flexbox vcenter">
+      <img src="./agent-overview.png" alt="" />
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>Here is an example of an agent saying hello</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Protocol Overview: Hello Request</h2>
+    </hgroup>
+    <article>
+
+<pre class="prettyprint" data-lang="json">{
+  target = "endpoint",
+  source = "agentA",
+  id = 0,
+  params = {
+    agent_id = "agentA",
+    process_version = "f451d7097edb197a9e08fa05cf5b0556ed15d7c7",
+    token = "0000000000000000000000000000000000000000000000000000000000000000.7777",
+    bundle_version = "0.1-75-gf451d70"
+  },
+  v = "1",
+  method = "handshake.hello"
+}
+</pre>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+        <li>And a response from the agent endpoint</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Protocol Overview: Hello Response</h2>
+    </hgroup>
+    <article>
+
+<pre class="prettyprint" data-lang="json">{
+  target = "agentA",
+  source = "endpoint",
+  id = 0,
+  result = { 
+    heartbeat_interval = 1000
+  },
+  v = "1"
+}
+</pre>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Protocol Overview: Check Schedule</h2>
+    </hgroup>
+
+    <article>
+<pre class="prettyprint" data-lang="json">{
+  "v": "1",
+  "id": 2,
+  "source": "endpoint",
+  "target": "agentA",
+  "result": {
+    "checks": {
+      "id": "ch1234",
+      "type": "agent.cpu",
+      "details": { "foo": "foo" },
+      "period": 30,
+      "timeout": 30,
+      "disabled": false
+    }
+  },
+  "error": null
+}
+</pre>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Protocol Overview: Proxyable</h2>
+    </hgroup>
+
+    <aside class="note"><section>
+
+      <ul>
+        <li>the target and source is for proxyability</li>
+        <li>customer might want to proxy all agent connections through one host</li>
+      </ul>
+
+    </section></aside>
+
+    <article class="flexbox vcenter">
+      <img src="agent-overview-proxy.png" class="reflect">
+    </article>
+
+  </slide>
+
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>How is it built</h2>
+    </hgroup>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>Luvit</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <p class="build"><img src="./ziggy.gif" alt="" /></p>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <p>luvit is scrawny like Mr. Stardust and uses very little memory.  luvit is a
+      young project and still growing, expect awkwardness. lua is Portuguese for moon
+      so it is space themed just like Ziggy. There is a great community with a good
+      sense of humor (luv_handles are a great data structure name)</p>
+    </section></aside>
+
+    <hgroup>
+      <h2>Untechnical Overview</h2>
+    </hgroup>
+
+    <article class="bigger">
+
+      <p>Luvit is a platform for building your app</p>
+
+      <ul class="build">
+        <li>Scrawny</li>
+        <li>Awkward</li>
+        <li>Space Themed (lua)</li>
+        <li>&lt;3 community</li>
+        <li>Familiar node APIs</li>
+      </ul>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <p>luajit is a really tiny jit vm for lua, super fast. The event loop is I/O
+      driven like nodejs. Unlike node.js lua has a really simple C APIc; this makes
+      native modules quite a bit nicer to build. luvit has the protocols and crypto
+      you would expect. Also, runs on all major platforms. Essentially a cross
+      platform platform to build your application.</p>
+    </section></aside>
+
+    <hgroup>
+      <h2>Technical Overview</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>lua using luajit</li>
+        <li>low memory footprint</li>
+        <li>I/O driven event loop</li>
+        <li>Small simple C API</li>
+        <li>crypto, ssl, zlib, json bindings</li>
+        <li>tcp, http, dns protocol support</li>
+        <li>Windows, Linux, FreeBSD and OSX</li>
+      </ul>
+
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+
+      <p>This code works today. It serves up an HTTP 1.1. server on 8080
+      that tells you Hello!</p>
+
+    </section></aside>
+
+    <hgroup>
+      <h2>HTTP Server Example</h2>
+    </hgroup>
+
+    <article>
+
+    <pre class="prettyprint" data-lang="lua">local http = require("http")
+
+http.createServer(function (req, res)
+  local body = "Hello world\n"
+  res:writeHead(200, {
+    ["Content-Type"] = "text/plain",
+    ["Content-Length"] = #body
+  })
+  res:finish(body)
+end):listen(8080)
+
+print("Server listening at http://localhost:8080/")</pre>
+
+  </article>
+
+</slide>
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>lua</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+        <p>Lua shares a lot of features with javascript like using floating
+        point numbers only, being dynamic and having first class functions. It
+        is like node's long lost Brazilian cousin</p>
+    </section></aside>
+
+    <hgroup>
+      <h2>Lua - Javascript&rsquo;s Long Lost Brazilian Cousin</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Dynamic language</li>
+        <li>Floating point numbers only</li>
+        <li>First class functions</li>
+        <li>Lexical closures</li>
+        <li>Metatables</li>
+        <li>Embeddable</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+
+      Using meta tables in lua you can implement an object system.  Essentially the
+      meta table `__index` field tells lua "if you can't find the requested element
+      in this table try this table". In that way you can implement Objects. One thing
+      to note about lua is that the a:heard() syntax passes in a as "self" to the
+      heard function. Calling a.heard() will error as self will be nil.
+
+    </section></aside>
+
+    <hgroup>
+      <h2>Example code</h2>
+    </hgroup>
+
+    <article>
+
+      <pre class="prettyprint" data-lang="lua">GroundControl = {}
+
+function GroundControl.new()
+  obj = {}
+  obj.heard_major_tom = false
+  setmetatable(obj, { __index = GroundControl })
+  return obj
+end
+
+function GroundControl:heard()
+  print(self.heard_major_tom)
+end
+
+a = GroundControl.new()
+
+a:heard()
+a.heard() -- this will error</pre>
+
+    </article>
+
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>libuv</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+
+      <p>Essentially libuv is just a big loop (see the next section) that
+      runs poll on a bunch of file descriptors with the timeout of the poll
+      set to the next timer that needs to run. When the poll complete a
+      callback is made so the user can handle the event. I have [talk on
+      libuv][libuv-osb] that covers all the details too</p>
+
+    </section></aside>
+
+    <hgroup>
+      <h2>Basic idea</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Two types of events in the loop:
+
+        <ul>
+          <li>I/O on file descriptors</li>
+          <li>Timers for future events</li>
+        </ul>
+        </li>
+        <li>Callbacks are attached to these events</li>
+        <li>epoll()/completion ports/kqueue() wait</li>
+        <li>callback is called on the correct event</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Event loop pseudo code</h2>
+    </hgroup>
+    <article class="bigger">
+      <pre class="prettyprint" data-lang="C">while (1) {
+  nfds = poll(fds, next_timer());
+
+  if (nfds == 0)
+     timer_callback();
+
+  for(n = 0; n &amp;lt; nfds; ++n) {
+     if (fds[n] == READY)
+        callbacks[n]();
+  }
+}
+      </pre>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>Zip</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+      <p>virgo expects all code in a zip file. This simplifies upgrades as
+      there is only one thing to upgrade check logic and it is nice for a sys
+      admin as we don't scatter stuff all over disk.</p>
+      </section>
+    </aside>
+
+    <hgroup>
+      <h2>Zip</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Lua code lives in a zip file</li>
+        <li>Small file to do upgrades</li>
+        <li>Fewer filesystem headaches</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>Sigar</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+      <p>Sigar abstracts out a lot of common checks for us.</p>
+      </section>
+    </aside>
+
+    <hgroup>
+      <h2>Sigar</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Process information</li>
+        <li>Network configuration</li>
+        <li>CPU, swap, load average</li>
+        <li>Usage statistics</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+        <li>Its an agent</li>
+        <li>We want to take over the world</li>
+        <li>Join us</li>
+      </ul>
+    </section></aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <hgroup class="auto-fadein">
+      <h2>Thats Virgo.</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+    <h2>Demo: Fixture server just for OSCON &lt;3</h2>
+    </hgroup>
+
+    <aside class="note"><section>
+      <ul>
+        <li>Live demo, danger zone</li>
+      </ul>
+    </section></aside>
+
+    <article class="flexbox vcenter">
+      <img src="./demo.gif" alt="" style="width: 100%;" />
+    </article>
+
+  </slide>
+
+  <slide class="logoslide red nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/rax-logo-small.png"></section></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+      <p>http://github.com/racker/virgo</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-394356-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>

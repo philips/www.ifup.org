@@ -1,0 +1,628 @@
+<!--
+Google IO 2012 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google IO 2012</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Why I care about Logging</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li class="to-build">Linux Kernel
+        </li>
+        <li class="to-build">Rackspace:
+          <br>
+          <ul>
+            <li>I work on <a href="http://www.rackspace.com/cloud/cloud_hosting_products/monitoring/">Cloud Monitoring</a></li>
+            <li>API Driven, Monitoring as a Service.</li>
+            <li>Distributed across all Rackspace data centers.</li>
+            <li>Async events trigger support issues.</li>
+            <li>When things break, we can be called in.</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Application vs System Logging</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Application and Service Logging, not OS level.</li>
+        <li>Don't abandon <code>syslog</code>, supplement it.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Logging is an Event Emitter</h2>
+    </hgroup>
+    <article class="bigger">
+      <div class="build">
+        <pre class="prettyprint">
+logging.error('Something is wrong');
+</pre>
+        <pre class="prettyprint">
+emit('log', {level: 'error', msg: 'Something is wrong'});
+</pre>
+        <p>There is no difference here.</p>
+      </div>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note">
+      <section>
+        <p><b>So what does this event look like?</b></p>
+      </section>
+    </aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Structured Logging</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Common log format for http servers</li>
+          <li><a href="http://en.wikipedia.org/wiki/Common_Log_Format">wikipedia article</a></li>
+        </ul>
+        <p><b>Not a new idea!</b></p>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Structured Logging</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Not a new idea!</li>
+        <li>Most logs already have some structure</li>
+        <li>1995: Common Log Format</li>
+        <pre class="prettyprint" data-lang="log">
+127.0.0.1 - - [10/Oct/2000:13:55:36 -0700] \
+    "GET /apache_pb.gif HTTP/1.0" 200 2326
+</pre>
+
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Combined log format used in apache, nginx and lighttpd</li>
+          <li>Consumed by tons of log analyzing tools</li>
+          <li>Pushing logs out with C, scraping them with perl</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Why Structured Logging?</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Many producers</li>
+        <li>Many consumers</li>
+        <li>Many programming languages</li>
+        <li>Services developed with only loose coupling.</li>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Many people have come to JSON, including us</li>
+          <li>There are even JSON parsers for C, see yajl</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Structured Logging: JSON</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Accessible in all Programming Languages</li>
+        <li>Newline terminated.</li>
+        <li><code>grep</code> works.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Lets look at an http log format again</li>
+          <li>User agent is easily consumable</li>
+          <li>Use a unique id to coorelate requests across services</li>
+          <li>JSON is expandable, you can add fields without breaking scripts</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Structured Logging: JSON</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="json">
+{
+    "timestamp": 1324830675.076,
+    "status": "404",
+    "short_message": "File does not exist: /var/www/no-such-file",
+    "host": "ord1.product.api0",
+    "facility": "httpd",
+    "errno": "ENOENT",
+    "remote_host": "50.57.61.4",
+    "remote_port": "40100",
+    "path": "/var/www/no-such-file",
+    "uri": "/no-such-file",
+    "level": 4,
+    "headers": {
+        "user-agent": "BadAgent/1.0",
+        "connection": "close",
+        "accept": "*/*"
+    },
+    "method": "GET",
+    "unique_id": ".rh-g2Tm.h-ord1.product.api0.r-axAIO3bO.c-9210.ts-1324830675.v-24e946e"
+}</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Perl is the goto for log parsing for many admins</li>
+          <li>compare the headache of json parsing to commong log parsing</li>
+        </ul>
+        <p><b>Punchline: adding a field!</b></p>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Combined Log Format vs JSON</h2>
+    </hgroup>
+    <article>
+      <p>Perl Cookbook says:</p>
+      <div class="build bigger">
+      <pre class="prettyprint" data-lang="common-log.pl">
+my ($client, $identuser, $authuser, $date, $time, $tz, $method,
+    $url, $protocol, $status, $bytes) =
+/^(\S+) (\S+) (\S+) \[([^:]+):(\d+:\d+:\d+) ([^\]]+)\] "(\S+) (.*?) (\S+)"
+    (\S+) (\S+)$/;</pre>
+        <pre class="prettyprint" data-lang="json.pl">
+  $msg = JSON->decode($json_text);</pre>
+      <p>Now a developer adds a new field...</p>
+</div>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note">
+      <section>
+        <p><b>Ask: What else might you want in a log</b></p>
+      </section>
+    </aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Elements of Every Log Message</h2>
+      <h3>Timestamps, Host, Messages, Levels...</h3>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Uniquely identifies a common/known error message</li>
+          <li>Makes finding line of code easier</li>
+          <li>The Linux Journal has this feature</li>
+        </ul>
+        <p><b>Press H to highlight</b></p>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Message Tags / IDs</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Easy to Search for strings.</li>
+        <li>Important for both Internal and Open Source.</li>
+        <li>Added in Apache HTTPD 2.4: "AH02182".
+      </ul>
+      <pre class="prettyprint" data-lang="apache.log">
+[Wed Jun 27 00:00:17.242251 2012] [allowmethods:error]
+[pid 70941:tid 4446611456] [client 203.0.113.3:4172]
+<b>AH01623</b>: client method denied by server configuration:
+'PROPFIND' to /x1/www/ooo-site.apache.org/content/3</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Message ids solve finding single component failure</li>
+          <li>Trace ids help find transaction between component</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Trace IDs</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Unique ID assigned to actions at the edge of your network</li>
+        <li>Propagated to all your backend services.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Lets look at trace ids from our system</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Trace IDs</h2>
+    </hgroup>
+    <article class="bigger">
+      <pre class="prettyprint" data-lang="apache.log">
+.rh-el1U.h-ord1-maas-prod-api0.\
+r-tvTCwfS3.c-33110.ts-1340775011499.v-c76a8c29
+</pre>
+      <ul class="build">
+        <li>rh: random on process startup</li>
+        <li>h: hostname</li>
+        <li>c: counter for this process</li>
+        <li>r: random per ID</li>
+        <li>ts: timestamp</li>
+        <li>v: Git version hash</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Trace IDs: Twitter Zipkin</h2>
+    </hgroup>
+    <article>
+      <img src="./zipkin-shot.png" class="reflect" width="100%">
+      <ul>
+        <li>Open Sourced June 7th</li>
+        <li>Uses 64bit Integer as Trace ID</li>
+        <li>Aggregates via Scribe, stores in Cassandra, Ruby Web application</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note">
+      <section>
+        <p>Moving logs around the system is now our next challene</p>
+        <p>Need to centralize to coorelate</p>
+      </section>
+    </aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Shipping Logs</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>There are several goals in shipping logs</li>
+        </ul>
+        <p><b>Punchline: Always write to disk</b></p>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Shipping Logs: Goals</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>If the network fails....</li>
+        <li>Always write to local disk.</li>
+        <li>Always write to local disk.</li>
+        <li>Always write to local disk.</li>
+        <li>Real Time-ish.</li>
+      </ul>
+  </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>This is how it looks for us</li>
+          <li>stdout captured by svlogd and pushed to disk</li>
+          <li>pushed to scribe for distribution over _tcp_</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>svlogd &amp; Scribe</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="./logging-flow.png" alt="Description" title="Description">
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Several technology options for shipping logs around</li>
+          <li>Scribe is a thrift service and written in C++</li>
+          <li>Apache Flume has just graduated apache incubator, Java, Hadoop focus</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Shipping Logs: Goals</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul>
+        <li>Scribe</li>
+        <li>Apache Flume</li>
+        <li>syslog</li>
+      </ul>
+  </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>We use scribe</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Scribe</h2>
+    </hgroup>
+    <article class="bigger">
+        <ul>
+          <li>Open Sourced by Facebook</li>
+          <li>Bulk Log mover</li>
+          <li>Can buffer, retry, hash distribution, etc</li>
+        </ul>
+  </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Scribe Setup</h2>
+    </hgroup>
+    <article>
+      <img src="./ScribeFlow.png" class="reflect" width="100%">
+      <ul>
+        <li>Services always send to a <code>localhost</code></li>
+        <li>Local Scribe sends to higher level router Scribes.</li>
+        <li>Router Scribes forward to another Scribe which over localhost sends to Graylog2.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Graylog2</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul>
+        <li>Open Source Web Application</li>
+        <li>Many Inputs (Syslog, Scribe, RabbitMQ)</li>
+        <li>Indexes into ElasticSearch</li>
+      </ul>
+    </article>
+  </slide>
+
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>slice off user defined streams of logs</li>
+          <li>setup alerting, reporting, etc</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Graylog2 Streams</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="./graylog2-streams.jpg">
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>look! we are searching by txnid</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Graylog2 Tracing</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="./graylog2-trace.jpg">
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>creating a permalink for certain messages</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Graylog2 Message Permalink</h2>
+    </hgroup>
+    <article class="flexbox vcenter">
+      <img src="./graylog2-permalink.jpg">
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note">
+      <section>
+        <p><b>One More thing moment</b></p>
+      </section>
+    </aside>
+
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></aside>
+    <hgroup class="auto-fadein">
+      <h2>Detour: Audit Logs of HTTP APIs</h2>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>Scenario: Phone support is asked when something was changed.</li>
+          <li>Side note: Linux Journal adding crypto hashes of logs</li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Audit Logs</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul>
+        <li>Not great for all types of APIs</li>
+        <li>Every mutation (POST/PUT/DELETE) is recorded.</li>
+        <li>Includes Headers and Request bodies.</li>
+        <li>Available to user in public API.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Audit Logs</h2>
+    </hgroup>
+    <article>
+      <pre class="prettyprint" data-lang="audit">
+"values": [
+{
+  "id": "541615e0-bee4-11e1-a3c9-69984867fc3c",
+  "timestamp": 1340642367038,
+  "method": "POST",
+  "url": "/v1.0/626873/entities/entMvVW47r/test-check",
+  "app": "checks",
+  "query": {},
+  "txnId": ".rh-TL0q.h-ord1-maas-prod-api0.r-8NQS2mx5.c-280514.ts-1340642366874.v-1a7152ba29615a722a2713bef4d4fe2b5c6ee7ae",
+  "payload": "{\"target_hostname\":\"www.example.com\",\"type\":\"remote.http\",\"details\":{},\"monitoring_zones_poll\":[\"mzord\",\"mzdfw\",\"mzlon\"]}",
+  "account_id": "626873",
+  "headers": {
+      "host": "monitoring.api.rackspacecloud.com",
+      "accept-encoding": "gzip,deflate",
+      "content-type": "application/json; charset=UTF-8",
+      "accept": "application/json",
+      "user-agent": "libcloud/0.10.1 (Rackspace Monitoring)",
+      "content-length": "140"
+  },
+  "statusCode": 400
+},
+</pre>
+    </article>
+  </slide>
+
+
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/rax-logo-small.png"></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+      <p>http://ifup.org/slides</p>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="logoslide dark nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-394356-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>

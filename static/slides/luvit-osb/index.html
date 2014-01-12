@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<!--
+  Google HTML5 slide template
+
+  Authors: Luke Mahé (code)
+           Marcin Wichary (code and design)
+
+           Dominic Mazzoni (browser compatibility)
+           Charles Chen (ChromeVox support)
+
+  URL: http://code.google.com/p/html5slides/
+-->
+
+<html>
+  <head>
+    <title>luvit - node's Ziggy Stardust</title>
+
+    <meta charset='utf-8'>
+    <script src='slides.js'></script>
+  </head>
+
+  <style>
+    /* Your individual styles here, or just use inline styles if that’s
+       what you want. */
+  </style>
+
+  <body style='display: none'>
+
+    <section class='slides layout-regular template-default'>
+
+      <!-- Your slides (<article>s) go here. Delete or comment out the
+           slides below. -->
+
+      <article class='biglogo'>
+        <p><a href="http://ifup.org/slides/luvit-osb">http://ifup.org/slides/luvit-osb</a></p>
+      </article>
+
+      <article>
+        <h1>
+          node's Ziggy Stardust
+        </h1>
+        <p class="alignright">
+          Brandon Philips
+          <br>
+          brandon@ifup.org
+          <br>
+          June 26th, 2012
+        </p>
+        <div class="build">
+          <img style='height: 500px' src='images/ziggy.gif'>
+        </div>
+      </article>
+
+      <article>
+
+      <h3>About me</h3>
+
+      <ul>
+      <li>Love working on systems software</li>
+      <li>Work at Rackspace on the Cloud Monitoring team</li>
+      <li>Previously at SUSE working on the Linux Kernel</li>
+      </ul>
+
+      <div class="build">
+        <img style="height: 279px; width=389px" src='images/nisha-brandon-bike.jpg' />
+      <div>
+
+      <!-- TPN: biked from Astoria to Idaho along the Columbia last week! Woo! -->
+
+      </article>
+
+      <article>
+
+      <h1>Orientation</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Untechnical Overview</h3>
+
+      <p>Luvit is a platform for building your app</p> 
+      <ul class="build">
+        <li>Scrawny</li>
+        <li>Awkward</li>
+        <li>Space Themed (lua)</li>
+        <li>&lt;3 community</li>
+        <li>Familiar node APIs</li>
+      </ul>
+
+      </article>
+
+
+      <article>
+
+      <h3>Technical Overview</h3>
+
+      <ul class="build">
+        <li>lua using luajit</li>
+        <li>low memory footprint</li>
+        <li>I/O driven event loop</li>
+        <li>Small simple C API</li>
+        <li>crypto, ssl, zlib, json bindings</li>
+        <li>tcp, http, dns protocol support</li>
+        <li>Windows, Linux, FreeBSD and OSX</li>
+      </ul>
+
+      <!-- Essentially a cross platform platform to build your application -->
+
+      </article>
+
+      <article>
+
+      <h3>HTTP Server Example</h3>
+
+      <pre><code>local http = require("http")
+
+http.createServer(function (req, res)
+  local body = "Hello world\n"
+  res:writeHead(200, {
+    ["Content-Type"] = "text/plain",
+    ["Content-Length"] = #body
+  })
+  res:finish(body)
+end):listen(8080)
+
+print("Server listening at http://localhost:8080/")</code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>Community</h3>
+
+      <ul class="build">
+        <li><a href="http://luvit.io">luvit.io</a></li>
+        <li>Use <a href="http://github.com/luvit/luvit">github</a> pull requests/issues</li>
+        <li>IRC on freenode #luvit</li>
+        <li>Google group mailing list for discussion</li>
+        <li>Apache 2.0 Licensed codebase</li>
+        <li>Fun group of contributors</li>
+      </ul>
+
+
+      <!-- TPN: say hi in the IRC room, luvhandles anecdote -->
+
+
+      </article>
+
+      <article>
+
+      <h3>History of luvit</h3>
+
+      <ul class="build">
+        <li>Started by Tim Caswell in 2011</li>
+        <li>Strong community of contributors</li>
+        <ul>
+          <li>Vladimir Dronnikov</li>
+          <li>Ryan Phillips</li>
+          <li>Paul Querna</li>
+          <li>Brandon Philips (me)</li>
+        </ul>
+        <li>People taking the project in a variety of directions</li>
+        <ul>
+          <li>HTTP Application Servers</li>
+          <li>SDL demos on Linux</li>
+          <li>iPhone app development</li>
+          <li>Cloud monitoring agent</li>
+        </ul>
+      </ul>
+      </article>
+
+      <article>
+
+      <h1>Motivations</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Community motivations</h3>
+
+      <ul class="build">
+        <li>Small memory footprint</li>
+        <li>Pure C codebase</li>
+        <li>Embeddable</li>
+        <li>Coroutines</li>
+        <li>Fast!</li>
+      </ul>
+
+      </article>
+
+      <article>
+
+      <h3>Comparison to node</h3>
+
+      <!-- details here -->
+
+        <ul>
+          <li>256MB cloud machine running Linux</li>
+          <li>HTTP Server Benchmark</li>
+          <li>20 simultaneous requests</li>
+          <li>20000 total requests</li>
+          <li>Doing simple GET</li>
+        </ul>
+        <ul class="build">
+          <li>luvit - 3.09 MB     - ~4100 requests/second</li>
+          <li>node  - <b>51.99 MB</b> - ~4900 requests/second</li>
+        </ul>
+
+      </article>
+
+      <article>
+
+      <h3>Cloudkick Agent</h3>
+
+      <!-- Lets look back in time to a project I worked on using Lua and C. -->
+
+      <ul>
+      <li>Doing network I/O to a master server</li>
+      <li>Collecting statistics about the machine</li>
+      <li>Also running custom plugins</li>
+      <li>Single threaded</li>
+      </ul>
+
+
+      </article>
+
+      <article>
+
+      <h1>Foundations</h1>
+
+      </article>
+
+      <article>
+
+      <h1>lua</h1>
+
+      </article>
+
+      <article>
+
+      <h3>History</h3>
+
+      <ul>
+        <li>Developed in Brazil at TeCGraf</li>
+        <li>Related to a language called sol (sun)</li>
+        <li>New language called lua (moon)</li>
+        <li>Meta-mechanisms instead of features</li>
+        <li><a href="http://www.tecgraf.puc-rio.br/~lhf/ftp/doc/hopl.pdf">Really interesting history write-up</a></li>
+      </ul>
+
+      <!-- meta tables are an example of a meta mechanism -->
+
+      </article>
+
+
+      <article>
+
+        <h3>
+          Lua - Javascript's Long Lost Brazilian Cousin
+        </h3>
+        <ul>
+          <li>Dynamic language</li>
+          <li>Floating point numbers only</li>
+          <li>First class functions</li>
+          <li>Lexical closures</li>
+          <li>Metatables</li>
+          <li>Embeddable</li>
+        </ul>
+
+      </article>
+
+      <article>
+
+      <h3>Example code</h3>
+
+      <pre><code>GroundControl = {}
+
+function GroundControl.new()
+  obj = {}
+  obj.heard_major_tom = false
+  setmetatable(obj, { __index = GroundControl })
+  return obj
+end
+
+function GroundControl:heard()
+  print(self.heard_major_tom)
+end
+
+a = GroundControl.new()
+
+a:heard()
+a.heard()
+      </code></pre>
+
+      </article>
+
+      <article>
+
+      <h1>luajit</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Features</h3>
+
+      <ul>
+      <li>x86, ARM, PPC, MIPS</li>
+      <li>API compatible with Lua 5.1</li>
+      <li>125K for VM, 85K for JIT compiler</li>
+      <li>JIT inlines FFI</li>
+      </ul>
+
+
+      </article>
+
+      <article>
+
+      <h1>libuv</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Basic idea</h3>
+
+      <ul class="build">
+        <li>Two types of events in the loop:</li>
+        <ul>
+          <li>I/O on file descriptors</li>
+          <li>Timers for future events</li>
+        </ul>
+        <li>Callbacks are attached to these events</li>
+        <li>epoll()/completion ports/kqueue() wait</li>
+        <li>callback is called on the correct event</li>
+      </ul>
+
+      </article>
+
+      <article>
+
+      <h3>Event loop pseudo code</h3>
+
+      <pre><code>for (;;) {
+  nfds = poll(fds, maxfd, next_timer());
+  if (nfds == 0)
+     timer_callback();
+
+  for(n = 0; n &lt; nfds; ++n) {
+     callbacks[n]();
+  }
+}
+      </code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>Other platforms built on libuv</h3>
+
+      <!-- Rust is a new language from mozilla
+           candor is a limited subset of javascript
+           luvmonkey is mozilla's spidermonkey with libuv -->
+
+
+      <ul>
+      <li><a href="http://www.rust-lang.org/">rust-lang</a></li>
+      <li><a href="http://nodejs.org/">node.js</a></li>
+      <li><a href="https://github.com/creationix/candor.io">candor.io</a></li>
+      <li><a href="https://github.com/creationix/luvmonkey">luvmonkey</a></li>
+      </ul>
+
+
+      </article>
+
+      <article>
+
+      <h1>building luvit</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Follow along at home</h3>
+
+      <pre><code>git clone git://github.com/luvit/luvit.git
+cd luvit</code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>gyp (all platforms)</h3>
+
+      <pre><code>./configure
+make -C out
+tools/build.py test
+./out/Debug/luvit
+Welcome to the Luvit repl
+&gt;</code></pre>
+
+      <h3>make (linux, embedded)</h3>
+
+      <pre><code>make
+make test
+./build/luvit
+Welcome to the Luvit repl
+&gt;</code></pre>
+
+      </article>
+
+      <article>
+
+      <h1>luvit code practices</h1>
+
+      <p>http://ifup.org/slides/luvit-osb/examples</p>
+
+      </article>
+
+      <article>
+
+      <h3>Object system</h3>
+
+      <!-- Lua doesn't have an object system so we impelemted
+           our own in order to do our inheritance of stream,
+           event emitter, etc -->
+
+
+      <pre><code>local Object = require('core').Object
+
+local Rectangle = Object:extend()
+function Rectangle:initialize(w, h)
+  self.w = w
+  self.h = h
+end
+function Rectangle:getArea()
+  return self.w * self.h
+end
+
+local rect = Rectangle:new(3, 4)
+p(rect:getArea())
+      </code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>Module System</h3>
+
+      <!-- leaking to global scope is a bad practice
+           require() returns a table that the imported
+           file returns -->
+
+
+      <pre><code>-- hello.lua
+local hello = {}
+hello.world = function()
+  print("Hello World")
+end
+return hello
+
+-- run.lua
+local hello = require('hello')
+hello.world()
+      </code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>JSON Example</h3>
+
+      <pre><code>local JSON = require('json')
+local value = JSON.parse([[
+{
+  "author": "Brandon Philips &lt;brandon@ifup.org&gt;",
+  "name": "luvit - node's Ziggy Stardust",
+  "description": "a talk about luvit"
+}
+]])
+
+local json = JSON.stringify(value, {beautify=true,indent_string="  "});
+print(json)
+      </code></pre>
+
+      </article>
+
+      <article>
+
+      <h3>HTTP Client</h3>
+
+      <pre><code>local http = require('http')
+
+      local options = {
+        host = "luvit.io",
+        port = 80,
+        path = "/"
+      }
+
+      local req = http.request(options, function (res)
+        res:on('data', function (chunk)
+          p("ondata", {chunk=chunk})
+        end)
+      end)
+
+      req:done()
+      </code></pre>
+
+      </article>
+
+      <article>
+        <h2>
+          FFI is awesome! And Fast.
+        </h2>
+        <section>
+        <p>
+          Call C functions without writing C
+        </p>
+        <pre>
+local ffi = require("ffi")
+
+ffi.cdef[[
+  int printf(const char *fmt, ...);
+]]
+
+ffi.C.printf("Hello %s!\n", "world")
+</pre>
+        </section>
+      </article>
+
+
+      <article>
+
+      <h1>Users</h1>
+
+      </article>
+
+      <article>
+
+      <h3>Modules</h3>
+
+      <ul>
+        <li><a href="https://github.com/kengonakajima/luvit-mysql">luvit-mysql</a> - MySQL binding</li>
+        <li><a href="https://github.com/twojcik/luvit-redis">luvit-redis</a> - redis bindings</li>
+        <li><a href="https://github.com/dvv/luvit-curl">curl</a> - Simple HTTP request helper</li>
+        <li><a href="https://github.com/radare/luvit-irc">luvit-irc</a> - IRC Client Library</li>
+        <li><a href="https://github.com/kengonakajima/lua-msgpack-native">lua-msgpack-native</a> - Fast MessagePack</li>
+        <li><a href="https://github.com/yields/rounded">rounded</a> - Connect middleware</li>
+        <li><a href="https://github.com/racker/luvit-bourbon">bourbon</a> - async test runner</li>
+        <li><a href="https://github.com/dvv/luvit-checkit">checkit</a> - simple test runner</li>
+      </ul>
+
+      </article>
+
+      <article>
+
+      <h3>Applications</h3>
+
+      <ul>
+        <li>luvit.io is hosted using luvit</li>
+        <li>Rackspace agent (see me at OSCON)</li>
+        <li>Demos of using SDL/GL and Joystick interaction</li>
+      </ul>
+
+      </article>
+
+      <article>
+
+      <h2>Future work</h2>
+
+      <!-- Documentation is critical, we often rely on nodejs.org, eek -->
+
+      <ul class="build">
+        <li>Documentation!</li>
+        <li>Package management</li>
+        <li>luvit as a library</li>
+        <li>ports to OSX/iOS and Android event loops</li>
+      </ul>
+
+      </article>
+
+      <article class='fill'>
+        <h3>
+          <a href="http://ifup.org/slides">ifup.org/slides</a>
+        </h3>
+          <img style='height: 400px' id='fill' src="images/rax-sfo-logo.png">
+      </article>
+
+
+      <article class='fill'>
+        <h3>
+          Thanks! - <a href="http://luvit.io">fork on luvit.io</a> - contact me: brandon@ifup.org
+        </h3>
+        <p>
+          <img id="fill" src='images/octonaut.jpg'>
+        </p>
+        <div class="build">
+          <img class="alignright" style='height: 200px' src='images/ziggy.gif'>
+        </div>
+        <div class='source white'>
+          Source: Octodex
+        </div>
+      </article>
+
+  </body>
+</html>

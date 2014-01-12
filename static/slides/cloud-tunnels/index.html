@@ -1,0 +1,542 @@
+<!--
+Google IO 2012 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cloud Tunnels - Brandon Philips</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+<!--
+
+
+-->
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <aside class="gdbar"><img src="images/rax-logo-small.png"></section></aside>
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide>
+    <aside class="note"><section>
+      <ul>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Who am I?</h2>
+    </hgroup>
+    <article class="bigger">
+      <ul class="build">
+        <li>Currently part of <a href="http://www.rackspace.com/cloud/cloud_hosting_products/monitoring/">Cloud Monitoring</a> at Rackspace</li>
+        <li>Previously at SuSE on Kernel team</li>
+        <li>Saw a talk at Linux Plumbers Conference (Tunneling Monster)</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+        <li>Define monitoring</li>
+        <li>External monitoring</li>
+        <li>Internal monitoring</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>What are Cloud Networks?</h2>
+    </hgroup>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Cloud Networks are...</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Transparent to the cloud machines</li>
+        <li>Multi-tenant on a single IP network</li>
+        <li>Tenant networks can't see/talk to each other</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+    </section></aside>
+
+    <hgroup>
+      <h2>Networking Basics</h2>
+    </hgroup>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <article class="flexbox vcenter">
+      <img src="./turtles.jpg" alt="" />
+    </article>
+  </slide>
+
+  <slide>
+    <article class="flexbox vcenter">
+      <img src="./turtles-clam.jpg" alt="" />
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Don't we already have VLANs?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>An extension to ethernet frames</li>
+        <li>12 bits of VLAN ID, only 4096 (tenant)</li>
+        <li>Requires physical switch participation</li>
+        <ul>
+          <li>Lots of different hardware to configure</li>
+          <li>Hard to do quickly on-demand</li>
+        </ul>
+        <li>Conclusion: Built for a different era</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>L2 in L3 Tunneling</h2>
+    </hgroup>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>L2 in L3 tunneling to the rescue</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>You want a private L2 network between VMs</li>
+        <li>You already have working IP between the members of the network</li>
+        <li>Use that "underlay" IP network and overlay a private ethernet on top</li>
+      </ul>
+    </article>
+
+  </slide>
+
+
+  <slide>
+    <article class="flexbox vcenter">
+      <img src="./L2-in-L3.png" alt="" />
+    </article>
+  </slide>
+
+
+
+  <slide>
+    <article class="flexbox vcenter">
+      <img src="./tunneling2.png" alt="" />
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Three Contenders</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul>
+        <li>VXLAN</li>
+        <li>NVGRE</li>
+        <li>STT</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>NVGRE</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Network Virtualization using Generic Routing Encapsulation (<a href="http://tools.ietf.org/id/draft-sridharan-virtualization-nvgre-01.txt">nvgre</a>)</li>
+        <li>Uses the GRE for encapsulation</li>
+        <li>24 bits of tenant space (16 million)</li>
+        <li>Microsoft/HP/Intel/Broadcom</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>VXLAN</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Virtual eXtensible Local Area Network (<a href="http://tools.ietf.org/id/draft-mahalingam-dutt-dcops-vxlan-02.txt">vxlan</a>)</li>
+        <li>Encapsulates in a UDP packet</li>
+        <li>24 bits of tenant space (16 million)</li>
+        <li>VMWare/Cisco/Broadcom/Red Hat</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>STT</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Stateless Transport Tunneling (<a href="http://tools.ietf.org/id/draft-davie-stt-02.txt">stt</a>)</li>
+        <li>Uses a "cute" hack to get performance from network gear</li>
+        <ul>
+          <li>Use the TCP header "syntax"</li>
+          <li>Take advantage of hardware TCP offload on existing server hardware</li>
+        </ul>
+        <li>Large 64 bit context id (16 million)</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <article class="flexbox vcenter">
+      <img src="./TCP-headers.png" alt="" />
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>STT Example Explained</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>ACK is used as an identification field</li>
+        <li>SEQ upper is used for STT frame length</li>
+        <li>SEQ lower is used for STT frame offset of this packet </li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>STT is a cool hack! But...</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Firewalls inspecting L3 traffic will be grumpy</li>
+        <ul>
+          <li>TCP state machine isn't used</li>
+        </ul>
+        <li>Could confuse the network in the middle</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>What about broadcast/multicast</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Essentially all standards rely on IP multicast</li>
+        <li>Mapping of virtual network to multicast group is left undefined</li>
+        <li>Out of scope for these tunneling protocols</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>What is the payoff?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Multicast between virtual machines</li>
+        <li>Less burden on 100% secure firewalls</li>
+        <li>Can be built in a secure manner</li>
+        <li>Much more sophisticated attacks required</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide class="segue red nobackground">
+    <aside class="note"><section>
+      <ul>
+        <li>Define monitoring</li>
+        <li>External monitoring</li>
+        <li>Internal monitoring</li>
+      </ul>
+    </section></aside>
+
+    <hgroup>
+      <h2>Security & Privacy</h2>
+    </hgroup>
+
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Security of L2 in L3 Tunneling</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>VM ethernet can be spoofed and inspected by any attacker at the IP level</li>
+        <li>Virtual Network ID must be properly communicated automically without reuse</li>
+        <li>All three RFCs recommend considering IPSec for underlay network</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Cases where a cloud network could increase security</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>Are you lazy? A Cloud Network would be a big step up</li>
+        <li>Keep backend servers off of public IPs</li>
+        <li>Running old insecure OSes for building packages</li>
+        <li>Creating isolated dev/qe machines environments</li>
+      </ul>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Bottom Line?</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <p class="build">Pragmatic choice is to still secure your services with TLS/SSL/IPSec</p>
+    </article>
+
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+        </ul>
+      </section>
+    </aside>
+
+    <hgroup>
+    <h2>Take aways</h2>
+    </hgroup>
+
+    <article class="bigger">
+      <ul class="build">
+        <li>L2 in L3 is probably here to stay in the cloud</li>
+        <li>Three emerging standards: VXLAN/NVGRE/STT</li>
+        <li>In its raw form these protocols give a level of privacy but not security</li>
+        <li>You should still use SSL/IPSec/etc between backend services</li>
+      </ul>
+    </article>
+
+  </slide>
+
+
+
+  <slide class="logoslide red nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/rax-sfo-logo.png"></span>
+    </article>
+  </slide>
+
+  <slide class="thank-you-slide segue nobackground">
+    <aside class="gdbar right"><img src="images/rax-logo-small.png"></section></aside>
+    <article class="flexbox vleft auto-fadein">
+      <h2>&lt;Thank You!&gt;</h2>
+    </article>
+    <p class="auto-fadein" data-config-contact>
+      <!-- populated from slide_config.json -->
+    </p>
+  </slide>
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-394356-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>

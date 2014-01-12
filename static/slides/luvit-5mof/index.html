@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<!--
+  Google HTML5 slide template
+
+  Authors: Luke Mahé (code)
+           Marcin Wichary (code and design)
+
+           Dominic Mazzoni (browser compatibility)
+           Charles Chen (ChromeVox support)
+
+  URL: http://code.google.com/p/html5slides/
+-->
+
+<html>
+  <head>
+    <title>Luvit - Node's Ziggy Stardust</title>
+
+    <meta charset='utf-8'>
+    <script src='slides.js'></script>
+  </head>
+  
+  <style>
+    /* Your individual styles here, or just use inline styles if that’s
+       what you want. */
+  </style>
+
+  <body style='display: none'>
+
+    <section class='slides layout-regular template-default'>
+
+      <!-- Your slides (<article>s) go here. Delete or comment out the
+           slides below. -->
+
+      <article class='biglogo'>
+      </article>
+
+      <article>
+        <h1>
+          Node's Ziggy Stardust
+        </h1>
+        <p class="alignright">
+          Brandon Philips
+          <br>
+          brandon@ifup.org
+          <br>
+          May 17, 2012
+        </p>
+        <div class="build">
+          <img style='height: 500px' src='images/ziggy.gif'>
+        </div>
+      </article>
+
+      <article>
+        <h3>
+          Features in Luvit
+        </h3>
+        <ul class="build">
+          <li>&lt;3 community</li>
+          <li>Scrawny</li>
+          <li>Familiar node APIs</li>
+          <li>TLS support</li>
+          <li>Crypto library</li>
+          <li>HTTP server and client</li>
+          <li>JSON parser/stringify (yajl)</li>
+          <li>Fast FFI</li>
+          <li>Simple C API</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>
+          HTTP Server
+        </h3>
+        <section>
+        <pre>
+local http = require("http")
+
+http.createServer(function (req, res)
+  local body = "Ground control to Major Tom\n"
+  res:writeHead(200, {
+    ["Content-Type"] = "text/plain",
+    ["Content-Length"] = #body
+  })
+  res:finish(body)
+end):listen(8080)
+
+print("Server listening at http://localhost:8080/")
+</pre>
+        </section>
+      </article>
+
+      <article>
+        <h3>
+          HTTP Client
+        </h3>
+        <section>
+        <pre>
+local http = require('http')
+
+http.request({
+  host = "127.0.0.1",
+  port = 80,
+  path = "/"
+}, function (res)
+  res:on('data', function (chunk)
+    p("ondata", {chunk=chunk})
+  end)
+  res:on("end", function ()
+    res:destroy()
+  end)
+end)
+</pre>
+        </section>
+      </article>
+
+      <article>
+        <h3>
+          Scrawny
+        </h3>
+        <ul>
+          <li>HTTP Server Benchmark</li>
+          <li>20 simultaneous requests</li>
+          <li>20000 total requests</li>
+          <li>Doing simple GET</li>
+        </ul>
+        <ul class="build">
+          <li>luvit - 3 MB     - 5100 requests/second</li>
+          <li>node  - <b>50 MB</b> - 6000 requests/second</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>
+          Lua - Javascript's Long Lost Brazilian Cousin
+        </h3>
+        <ul>
+          <li>Dynamic language</li>
+          <li>Floating point numbers only</li>
+          <li>First class functions</li>
+          <li>Lexical closures</li>
+          <li>Metatables</li>
+          <li>Embeddable</li>
+          <li><a href="http://www.tecgraf.puc-rio.br/~lhf/ftp/doc/hopl.pdf">Really interesting history</a></li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>
+          Tables, tables, tables
+        </h3>
+        <pre>
+GroundControl = {}
+
+function GroundControl.new()
+  obj = {}
+  obj.var = 1
+  setmetatable(obj, { __index = GroundControl })
+  return obj
+end
+
+function GroundControl:print()
+  print(self.var)
+end
+
+a = GroundControl.new()
+
+a:print()
+
+a.print() -- error!
+        </pre>
+      </article>
+
+      <article>
+        <h3>
+          libuv - I/O event loop magic
+        </h3>
+        <ul>
+          <li>Non blocking sockets</li>
+          <li>Timers</li>
+          <li>Asnyc DNS resolver</li>
+          <li>Async filsystem operations</li>
+          <li>Thread pool</li>
+          <li>Cross platform: Windows, Linux, OSX</li>
+        </ul>
+      </article>
+
+
+      <article>
+        <h2>
+          FFI is awesome! And Fast.
+        </h2>
+        <section>
+        <p>
+          Call C functions without writing C
+        </p>
+        <pre>
+local ffi = require("ffi")
+
+ffi.cdef[[
+  int printf(const char *fmt, ...);
+]]
+
+ffi.C.printf("Hello %s!\n", "world")
+</pre>
+        </section>
+      </article>
+
+
+      <article>
+        <h3>
+          The Future
+        </h3>
+        <ul class="build">
+          <li>Event loop integration</li>
+          <ul>
+            <li>OS X</li>
+            <li>QT</li>
+            <li>GTK</li>
+          </ul>
+          <li>Real products! Rackspace monitoring agent</li>
+          <li>Package manager</li>
+          <li>More modules</li>
+        </ul>
+      </article>
+
+      <article class='fill'>
+        <h3>
+          <a href="http://ifup.org/slides">ifup.org/slides</a>
+        </h3>
+          <img style='height: 400px' id='fill' src="images/rax-sfo-logo.png">
+      </article>
+
+
+      <article class='fill'>
+        <h3>
+          Thanks! - <a href="http://luvit.io">fork on luvit.io</a> - contact me: brandon@ifup.org
+        </h3>
+        <p>
+          <img id="fill" src='images/octonaut.jpg'>
+        </p>
+        <div class="build">
+          <img class="alignright" style='height: 200px' src='images/ziggy.gif'>
+        </div>
+        <div class='source white'>
+          Source: Octodex
+        </div>
+      </article>
+
+  </body>
+</html>
