@@ -1,0 +1,7 @@
+{{ template "chrome/header.html" . }}
+
+  {{ range first 10 .Data.Pages }}
+    {{ .Render "summary"}}
+  {{ end }}
+
+{{ template "chrome/footer.html" . }}
