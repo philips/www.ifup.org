@@ -1,0 +1,4 @@
+- `layouts/` is MIT license, probably the most interesting OSS contribution...
+- `scripts/` hacky scripts for converting from jekyll and uploading to google cloud storage
+- `static/{css,js,fonts}` has lots of licenses for twitter bootstrap, jquery, etc
+- `content/` is my content and is copyright Brandon Philips 2010-2013
