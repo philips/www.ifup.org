@@ -1,5 +1,5 @@
 {
-	"disqus_url": "http://www.ifup.org/2012/10/11/video:-cloud-tunnels-@-cloud-mafia/index.html",
+	"disqus_url": "http://www.ifup.org/posts/video-modern-linux-server-with-containers/",
 	"disqus_title": "Video: ",
 
 	"Title": "Video: Modern Linux Server with Containers",
