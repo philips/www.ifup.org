@@ -3,7 +3,7 @@
 	"disqus_title": "Getting to Goven",
 
 	"Title": "Getting to Goven",
-	"Pubdate": "2014-01-18",
+	"Pubdate": "2014-02-16",
 	"Keywords": [
 		"go",
 		"etcd",
