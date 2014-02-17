@@ -26,8 +26,8 @@ we were testing various failure modes. A great suggestion from Brad Fitz was
 to use a mock of net.Conn to test various network problems. I hope to start
 executing on that soon.
 
-{{% speakerdeck 42f883e060f801319dd43a22f70921ad %}}
-
 <iframe width="560" height="315" src="//www.youtube.com/embed/BxkJRKYkUc4?start=532" frameborder="0" allowfullscreen></iframe>
+
+{{% speakerdeck 42f883e060f801319dd43a22f70921ad %}}
 
 [gosf]: http://www.meetup.com/golangsf/events/146084182/
